@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#16766f">
+  <meta name="description" content="A friendly class register for daily attendance, weekly reports and learner attendance analysis.">
+  <title>Class Register · Roll Call</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icon-192.png">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <a class="skip-link" href="#student-grid">Skip to learner list</a>
+
+  <header class="topbar">
+    <div class="brand-lockup" aria-label="Class Register home">
+      <div class="brand-mark" aria-hidden="true"><span>✓</span></div>
+      <div class="brand-copy">
+        <div class="brand-eyebrow">YOUR TEACHER TOOLKIT</div>
+        <h1>Class <span>Register</span></h1>
+      </div>
+    </div>
+
+    <div class="date-controls" aria-label="Choose attendance date">
+      <button id="prev-day" class="day-btn" type="button" aria-label="Previous day">‹</button>
+      <div class="date-box" id="date-box">
+        <div class="date-line"><span class="calendar-icon" aria-hidden="true">▦</span><div id="date-display">Today</div><span class="date-caret" aria-hidden="true">⌄</span></div>
+        <div class="sync-line"><span id="sync-status" class="offline" aria-label="Offline">●</span><span id="sync-label">Offline-ready</span></div>
+        <input type="date" id="date-input" aria-label="Pick a date">
+      </div>
+      <button id="next-day" class="day-btn" type="button" aria-label="Next day">›</button>
+    </div>
+  </header>
+
+  <main>
+    <section class="welcome-panel" aria-labelledby="welcome-title">
+      <div class="welcome-copy">
+        <p class="eyebrow"><span class="eyebrow-dot"></span> THE DAILY CHECK-IN</p>
+        <h2 id="welcome-title">Let’s take<br class="mobile-break"> the <span>roll.</span></h2>
+        <p class="welcome-text">A little tap, a clear record. You’ve got this.</p>
+        <div class="quick-hint"><span aria-hidden="true">☝</span> Tap a learner’s card to update their attendance.</div>
+      </div>
+      <div class="welcome-art" aria-hidden="true">
+        <div class="art-sun"></div>
+        <div class="art-card art-card-back"><span></span><span></span><span></span></div>
+        <div class="art-card art-card-front"><div class="art-check">✓</div><div class="art-line art-line-long"></div><div class="art-line"></div><div class="art-stars">✦</div></div>
+        <div class="art-spark spark-one">✦</div><div class="art-spark spark-two">✧</div>
+      </div>
+    </section>
+
+    <nav class="workspace-switch" aria-label="Register views" role="tablist">
+      <button id="register-view-tab" class="workspace-tab active" type="button" role="tab" aria-selected="true" aria-controls="daily-view">✓ Daily register</button>
+      <button id="reports-view-tab" class="workspace-tab" type="button" role="tab" aria-selected="false" aria-controls="reports-view">▤ Reports &amp; analysis</button>
+    </nav>
+
+    <div id="daily-view">
+      <section class="class-picker" aria-labelledby="class-heading">
+        <div class="section-heading">
+          <div><p class="section-step">STEP 01</p><h2 id="class-heading">Pick your class</h2></div>
+          <span class="section-aside">Swipe to see classes <span aria-hidden="true">→</span></span>
+        </div>
+        <div id="class-bar" class="class-bar" aria-label="Class filters"></div>
+      </section>
+
+      <section class="roster-section" aria-labelledby="roster-heading">
+        <div class="section-heading roster-heading">
+          <div><p class="section-step">STEP 02</p><h2 id="roster-heading">Your learners</h2><p class="section-subtitle">Tap a card to cycle through attendance statuses. Tap the small info button for a learner profile.</p></div>
+          <div class="status-legend" aria-label="Attendance status colours">
+            <span><i class="legend-dot present-dot"></i>Present</span>
+            <span><i class="legend-dot absent-dot"></i>Absent</span>
+            <span><i class="legend-dot bunked-dot"></i>Bunked</span>
+          </div>
+        </div>
+        <div id="student-grid" class="grid" aria-live="polite"></div>
+        <p class="roster-tip"><span aria-hidden="true">💡</span> Tip: each tap moves to the next status. Tap again to clear it.</p>
+      </section>
+    </div>
+
+    <section id="reports-view" class="reports-workspace" aria-labelledby="reports-title" hidden>
+      <div class="reports-hero">
+        <div>
+          <p class="section-step">DATA &amp; INSIGHTS</p>
+          <h2 id="reports-title">Attendance reports</h2>
+          <p>Choose a group and week. Your register becomes a printable report and an easy-to-analyse summary.</p>
+        </div>
+        <div class="reports-hero-icon" aria-hidden="true">▤</div>
+      </div>
+
+      <div class="report-builder">
+        <div class="report-form-grid">
+          <div class="report-field">
+            <label for="report-class">Group or class</label>
+            <select id="report-class"></select>
+          </div>
+          <div class="report-field">
+            <label for="report-date">Choose any date in the week</label>
+            <input id="report-date" type="date">
+            <small>The report uses the Monday–Friday week containing this date.</small>
+          </div>
+        </div>
+        <fieldset class="school-days">
+          <legend>School days to include</legend>
+          <p>Untick holidays or days when the class did not meet. Excluded days will not count as unmarked.</p>
+          <div class="day-choices">
+            <label><input type="checkbox" data-report-day="0" checked> Mon</label>
+            <label><input type="checkbox" data-report-day="1" checked> Tue</label>
+            <label><input type="checkbox" data-report-day="2" checked> Wed</label>
+            <label><input type="checkbox" data-report-day="3" checked> Thu</label>
+            <label><input type="checkbox" data-report-day="4" checked> Fri</label>
+          </div>
+        </fieldset>
+        <button id="generate-report-btn" class="generate-report-btn" type="button"><span aria-hidden="true">✦</span> Generate report</button>
+      </div>
+
+      <p id="report-status" class="report-status" role="status" aria-live="polite">Choose a group and week, then generate a report. Reports require an internet connection to retrieve the latest records.</p>
+
+      <section id="report-output" class="report-output" aria-label="Generated attendance report" hidden>
+        <div class="report-output-toolbar">
+          <div><p class="section-step">YOUR REPORT</p><h3 id="report-period-title">Weekly attendance</h3><p id="report-summary-line" class="section-subtitle"></p></div>
+          <div class="report-actions">
+            <button id="export-report-btn" type="button">⇩ Export CSV</button>
+            <button id="print-report-btn" type="button">▧ Print / PDF</button>
+          </div>
+        </div>
+        <div class="report-type-tabs" role="tablist" aria-label="Report type">
+          <button type="button" class="report-type-tab active" data-report-type="weekly" aria-selected="true">Weekly register</button>
+          <button type="button" class="report-type-tab" data-report-type="group" aria-selected="false">Group summary</button>
+          <button type="button" class="report-type-tab" data-report-type="learner" aria-selected="false">Learner analysis</button>
+        </div>
+        <div id="report-print-area">
+          <div class="print-report-head"><h1 id="print-report-title">Weekly Attendance Report</h1><p id="print-report-subtitle"></p></div>
+          <div id="report-body"></div>
+        </div>
+      </section>
+    </section>
+  </main>
+
+  <footer class="bottom-dock">
+    <div class="footer-inner">
+      <div id="summary" class="summary" aria-live="polite" aria-label="Attendance summary"></div>
+      <div class="footer-actions">
+        <button id="mark-all-btn" type="button"><span aria-hidden="true">✓</span> All present</button>
+        <button id="sync-btn" type="button"><span aria-hidden="true">↻</span> Sync now</button>
+      </div>
+    </div>
+  </footer>
+
+  <div id="profile-overlay" class="profile-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="profile-title">
+    <div class="profile-header">
+      <button id="profile-back" class="profile-back" type="button" aria-label="Close learner profile">←</button>
+      <div class="profile-heading-copy"><span class="profile-eyebrow">LEARNER PROFILE</span><div id="profile-title" class="profile-title">Loading…</div></div>
+      <div class="profile-header-mark" aria-hidden="true">☺</div>
+    </div>
+    <div class="profile-body" id="profile-body"></div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
